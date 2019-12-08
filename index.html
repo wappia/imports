@@ -18,10 +18,9 @@
     code.textContent = "// generated using https://wappia.github.io/imports\n\n"
 
     if (ret.default) {
-      delete ret.default
       code.textContent += `import def from '${url}'\n`
     }
-    code.textContent += `export {${Object.keys(ret).join(
+    code.textContent += `export {${Object.keys(ret).filter(k => k !== 'default').join(
       ', '
     )}} from '${url}'\n`
 
