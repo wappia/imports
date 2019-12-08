@@ -15,6 +15,8 @@
   async function writeImports(url) {
     const ret = await import(url)
 
+    code.textContent = "// generated using https://wappia.github.io/imports\n\n"
+
     if (ret.default) {
       delete ret.default
       code.textContent += `import def from '${url}'\n`
