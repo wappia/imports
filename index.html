@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<title>ES proxy</title>
+<h1>ES proxy generator</h1>
+<form style="margin-bottom: 20px;">
+  <label>
+    Enter entry point:
+    <input style="width: 100%;"></input>
+  </label>
+</form>
+<br />
+<code><pre style="display: none; border: 2px solid grey; padding: 20px;"></pre></code>
+<script type="module">
+  const code = document.querySelector('pre')
+
+  async function writeImports(url) {
+    const ret = await import(url)
+
+    if (ret.default) {
+      delete ret.default
+      code.textContent += `import def from '${url}'\n`
+    }
+    code.textContent += `export {${Object.keys(ret).join(
+      ', '
+    )}} from '${url}'\n`
+
+    if (ret.default) {
+      code.textContent += `export default def`
+    }
+  }
+
+  const form = document.querySelector('form')
+  
+  form.onsubmit = e => {
+    e.preventDefault()
+
+    const input = document.querySelector('input')
+    try {
+      writeImports(input.value)
+    } catch(e) {
+      code.textContent = e.message
+    }
+    code.style.display = 'initial'
+  }
+</script>
