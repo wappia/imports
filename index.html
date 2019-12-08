@@ -15,17 +15,18 @@
   async function writeImports(url) {
     const ret = await import(url)
 
-    code.textContent = "// generated using https://wappia.github.io/imports\n\n"
+    code.value = "// generated using https://wappia.github.io/imports\n\n"
 
     if (ret.default) {
-      console.log(ret.default)
       const name = ret.default.name || 'def'
-      code.textContent += `import ${name} from '${url}'\n`
-      code.textContent += `export default ${name}\n`
+      code.value += `import ${name} from '${url}'\n`
+      code.value += `export default ${name}\n`
     }
-    code.textContent += `export {${Object.keys(ret).filter(k => k !== 'default').join(
-      ', '
-    )}} from '${url}'\n`
+    
+    const namedExports = Object.keys(ret).filter(k => k !== 'default')
+    if (namedExports.length > 0) {
+      code.value += `export {${namedExports.join( ', ')}} from '${url}'\n` 
+    }
   }
 
   const form = document.querySelector('form')
@@ -38,7 +39,7 @@
       await writeImports(input.value)
       code.style.color = 'black'
     } catch(e) {
-      code.textContent = '' + e
+      code.value = '' + e
       code.style.color = 'red'
     }
     code.style.display = 'block'
