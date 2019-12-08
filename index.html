@@ -4,13 +4,13 @@
 <form style="margin-bottom: 20px;">
   <label>
     Enter entry point:
-    <input style="width: 100%;"></input>
+    <input style="width: 100%; padding: 7px;"></input>
   </label>
 </form>
 <br />
-<code><pre style="display: none; border: 2px solid grey; padding: 20px;"></pre></code>
+<textarea style="display: none; box-sizing: border-box; width: 100%; min-height: 150px; padding: 5px;"></textarea>
 <script type="module">
-  const code = document.querySelector('pre')
+  const code = document.querySelector('textarea')
 
   async function writeImports(url) {
     const ret = await import(url)
@@ -19,27 +19,26 @@
 
     if (ret.default) {
       code.textContent += `import def from '${url}'\n`
+      code.textContent += `export default def\n`
     }
     code.textContent += `export {${Object.keys(ret).filter(k => k !== 'default').join(
       ', '
     )}} from '${url}'\n`
-
-    if (ret.default) {
-      code.textContent += `export default def`
-    }
   }
 
   const form = document.querySelector('form')
   
-  form.onsubmit = e => {
+  form.onsubmit = async e => {
     e.preventDefault()
 
     const input = document.querySelector('input')
     try {
-      writeImports(input.value)
+      await writeImports(input.value)
+      code.style.color = 'black'
     } catch(e) {
-      code.textContent = e.message
+      code.textContent = '' + e
+      code.style.color = 'red'
     }
-    code.style.display = 'initial'
+    code.style.display = 'block'
   }
 </script>
